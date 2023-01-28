@@ -1,28 +1,64 @@
+import { MongoClient, ObjectId } from "mongodb";
+
 import MeetupDetail from "../../components/meetups/MeetupDetail";
 
-function MeetupDetails() {
+function MeetupDetails(props) {
   return (
     <MeetupDetail
-      title="A First Meetup"
-      address="Some Street 5, Some City"
-      descritpion="This is a first meetup"
+      image={props.meetupData.image}
+      title={props.meetupData.title}
+      address={props.meetupData.address}
+      description={props.meetupData.description}
     />
   );
 }
 
+export async function getStaticPaths() {
+  const client = await MongoClient.connect(
+    "mongodb+srv://parasf:2k6uK1QAMshL65ZI@cluster0.7s1zkrr.mongodb.net/meetups?retryWrites=true&w=majority&ssl=true"
+  );
+  const db = client.db();
+
+  const meetupsCollection = db.collection("meetups");
+
+  const meetups = await meetupsCollection.find({}, { _id: 1 }).toArray();
+
+  client.close();
+
+  return {
+    fallback: false,
+    paths: meetups.map((meetup) => ({
+      params: { meetupId: meetup._id.toString() },
+    })),
+  };
+}
+
 export async function getStaticProps(context) {
+  // fetch data for a single meetup
+
   const meetupId = context.params.meetupId;
-  console.log(meetupId);
+
+  const client = await MongoClient.connect(
+    "mongodb+srv://parasf:2k6uK1QAMshL65ZI@cluster0.7s1zkrr.mongodb.net/meetups?retryWrites=true&w=majority&ssl=true"
+  );
+  const db = client.db();
+
+  const meetupsCollection = db.collection("meetups");
+
+  const selectedMeetup = await meetupsCollection.findOne({
+    _id: ObjectId(meetupId),
+  });
+
+  client.close();
 
   return {
     props: {
       meetupData: {
-        image:
-          "https://c8.alamy.com/comp/R5J6WE/big-ben-clock-tower-and-house-of-parliament-in-the-night-london-uk-R5J6WE.jpg",
-        id: meetupId,
-        title: "First Meetup",
-        address: "Some Street 5, Some City",
-        descritpion: "This is a first meetup",
+        id: selectedMeetup._id.toString(),
+        title: selectedMeetup.title,
+        address: selectedMeetup.address,
+        image: selectedMeetup.image,
+        description: selectedMeetup.description,
       },
     },
   };
