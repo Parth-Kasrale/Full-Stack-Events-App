@@ -1,8 +1,20 @@
+import Head from "next/head";
 import { MongoClient } from "mongodb";
 import MeetupList from "../components/meetups/MeetupList";
 
 function HomePage(props) {
-  return <MeetupList meetups={props.meetups} />;
+  return (
+    <>
+      <Head>
+        <title>React Events</title>
+        <meta
+          name="description"
+          content="Browse a huge list of highly active React meetups!"
+        />
+      </Head>
+      <MeetupList meetups={props.meetups} />
+    </>
+  );
 }
 
 // export async function getServerSideProps(context) {
@@ -20,7 +32,7 @@ export async function getStaticProps() {
   //fetch data from an API
 
   const client = await MongoClient.connect(
-    "mongodb+srv://parasf:2k6uK1QAMshL65ZI@cluster0.7s1zkrr.mongodb.net/meetups?retryWrites=true&w=majority&ssl=true"
+    "mongodb+srv://parasf:4pu1Q9ONKk2WoEMV@cluster0.7s1zkrr.mongodb.net/meetups?retryWrites=true&w=majority"
   );
   const db = client.db();
 

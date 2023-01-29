@@ -1,21 +1,29 @@
 import { MongoClient, ObjectId } from "mongodb";
+import Head from "next/head";
 
 import MeetupDetail from "../../components/meetups/MeetupDetail";
 
 function MeetupDetails(props) {
   return (
-    <MeetupDetail
-      image={props.meetupData.image}
-      title={props.meetupData.title}
-      address={props.meetupData.address}
-      description={props.meetupData.description}
-    />
+    <>
+      <Head>
+        <title>{props.meetupData.title}</title>
+        <meta name="description" content={props.meetupData.description} />
+      </Head>
+
+      <MeetupDetail
+        image={props.meetupData.image}
+        title={props.meetupData.title}
+        address={props.meetupData.address}
+        description={props.meetupData.description}
+      />
+    </>
   );
 }
 
 export async function getStaticPaths() {
   const client = await MongoClient.connect(
-    "mongodb+srv://parasf:2k6uK1QAMshL65ZI@cluster0.7s1zkrr.mongodb.net/meetups?retryWrites=true&w=majority&ssl=true"
+    "mongodb+srv://parasf:4pu1Q9ONKk2WoEMV@cluster0.7s1zkrr.mongodb.net/meetups?retryWrites=true&w=majority"
   );
   const db = client.db();
 
@@ -39,7 +47,7 @@ export async function getStaticProps(context) {
   const meetupId = context.params.meetupId;
 
   const client = await MongoClient.connect(
-    "mongodb+srv://parasf:2k6uK1QAMshL65ZI@cluster0.7s1zkrr.mongodb.net/meetups?retryWrites=true&w=majority&ssl=true"
+    "mongodb+srv://parasf:4pu1Q9ONKk2WoEMV@cluster0.7s1zkrr.mongodb.net/meetups?retryWrites=true&w=majority"
   );
   const db = client.db();
 
